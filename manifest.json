@@ -1,7 +1,7 @@
 {
-  "name": "ETF Dashboard 2026",
-  "short_name": "ETF Tracker",
-  "description": "US Stock ETF Investment Dashboard with daily updates",
+  "name": "Stocks & Bonds Dashboard 2026",
+  "short_name": "Invest Tracker",
+  "description": "US Stock ETF and Bond Investment Dashboard with daily updates",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0b0f1a",
