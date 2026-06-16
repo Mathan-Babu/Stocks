@@ -3,30 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#00e5a0">
+<meta name="theme-color" content="#0a0a0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ETF Tracker">
+<meta name="apple-mobile-web-app-title" content="Invest Tracker">
 <link rel="manifest" href="./manifest.json">
-<title>ETF Dashboard 2026</title>
+<title>Stocks &amp; Bonds Dashboard 2026</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg: #0b0f1a;
-  --panel: #111827;
-  --panel2: #0e1726;
-  --border: #1e2d45;
-  --green: #00e5a0;
-  --blue: #3b82f6;
-  --amber: #f59e0b;
-  --red: #ef4444;
-  --purple: #a78bfa;
-  --pink: #f472b6;
-  --teal: #22d3ee;
-  --text: #e8edf5;
-  --muted: #8b98b1;
-  --dim: #3d4e66;
+  --bg: #0a0a0a;
+  --panel: #161616;
+  --panel2: #1c1c1c;
+  --border: #2e2e2e;
+  --green: #4ade80;
+  --blue: #d4d4d4;
+  --amber: #d4d4d4;
+  --red: #f87171;
+  --purple: #d4d4d4;
+  --pink: #d4d4d4;
+  --teal: #d4d4d4;
+  --gold: #ffffff;
+  --text: #f5f5f5;
+  --muted: #999999;
+  --dim: #555555;
   --safe-top: env(safe-area-inset-top);
   --safe-bot: env(safe-area-inset-bottom);
 }
@@ -46,44 +47,74 @@ body {
 /* ── TOP BAR ── */
 .topbar {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(11,15,26,0.92);
+  background: rgba(10,10,10,0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
-  padding: calc(12px + var(--safe-top)) 16px 12px;
+  padding: calc(10px + var(--safe-top)) 16px 0;
+}
+
+.topbar-row {
   display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 .topbar-left .eyebrow {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px; letter-spacing: 2px;
-  color: var(--green); text-transform: uppercase;
+  color: var(--muted); text-transform: uppercase;
 }
 
 .topbar-left h1 {
-  font-size: 18px; font-weight: 700;
-  background: linear-gradient(135deg, var(--text) 0%, var(--blue) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  font-size: 17px; font-weight: 700;
+  color: var(--text);
 }
 
 .refresh-btn {
-  background: rgba(0,229,160,0.1);
-  border: 1px solid rgba(0,229,160,0.3);
-  color: var(--green);
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  color: var(--text);
   padding: 8px 14px; border-radius: 20px;
   font-size: 12px; font-weight: 600;
   cursor: pointer; font-family: 'Inter', sans-serif;
   display: flex; align-items: center; gap: 6px;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 .refresh-btn:active { transform: scale(0.95); }
 .refresh-btn.spinning .spin-icon { animation: spin 1s linear infinite; }
-
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── ASSET CLASS TOGGLE (Stocks vs Bonds) ── */
+.asset-toggle {
+  display: flex;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 10px;
+}
+
+.asset-tab {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 0;
+  border-radius: 11px;
+  font-size: 13px; font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.25s;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+}
+
+.asset-tab.active.stocks { background: #f5f5f5; color: #0a0a0a; }
+.asset-tab.active.bonds { background: #f5f5f5; color: #0a0a0a; }
 
 /* ── STATUS BAR ── */
 .status-bar {
-  margin: 12px 16px;
+  margin: 0 16px 10px;
   padding: 10px 14px;
   background: var(--panel);
   border: 1px solid var(--border);
@@ -100,7 +131,7 @@ body {
 .status-dot.live { background: var(--green); box-shadow: 0 0 6px var(--green); }
 .status-dot.error { background: var(--red); }
 
-/* ── NAV TABS ── */
+/* ── NAV TABS (sub-tabs within asset class) ── */
 .nav-tabs {
   display: flex; gap: 6px;
   padding: 0 16px 12px;
@@ -121,11 +152,8 @@ body {
   transition: all 0.2s;
   white-space: nowrap;
 }
-.nav-tab.active {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: #fff;
-}
+.nav-tab.active.stocks-theme { background: var(--text); border-color: var(--text); color: var(--bg); }
+.nav-tab.active.bonds-theme { background: var(--text); border-color: var(--text); color: var(--bg); }
 
 /* ── SECTIONS ── */
 .section { padding: 0 16px 8px; }
@@ -146,16 +174,17 @@ body {
   font-size: 10px; font-weight: 700;
   font-family: 'IBM Plex Mono', monospace;
 }
-.pill-lt { background: rgba(59,130,246,0.15); color: var(--blue); }
-.pill-st { background: rgba(0,229,160,0.15); color: var(--green); }
-.pill-income { background: rgba(245,158,11,0.15); color: var(--amber); }
+.pill-lt { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.pill-st { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.pill-income { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.pill-safe { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
 
 .divider {
   height: 1px; background: var(--border);
   margin: 4px 0 16px; flex: 1;
 }
 
-/* ── ETF CARDS ── */
+/* ── ETF / BOND CARDS ── */
 .etf-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
 
 .etf-card {
@@ -180,6 +209,11 @@ body {
 .etf-card.growth::before { background: var(--pink); }
 .etf-card.income::before { background: var(--teal); }
 .etf-card.bond::before { background: var(--muted); }
+.etf-card.treasury::before { background: var(--gold); }
+.etf-card.tips::before { background: var(--dim); }
+.etf-card.muni::before { background: var(--dim); }
+.etf-card.corp::before { background: var(--dim); }
+.etf-card.ibond::before { background: var(--dim); }
 
 .etf-card:active { border-color: var(--blue); }
 
@@ -238,21 +272,27 @@ body {
   font-size: 10px; font-weight: 700;
   font-family: 'IBM Plex Mono', monospace;
 }
-.badge-broad { background: rgba(59,130,246,0.15); color: var(--blue); }
-.badge-tech { background: rgba(167,139,250,0.15); color: var(--purple); }
-.badge-semi { background: rgba(245,158,11,0.15); color: var(--amber); }
-.badge-dividend { background: rgba(0,229,160,0.15); color: var(--green); }
-.badge-growth { background: rgba(244,114,182,0.15); color: var(--pink); }
-.badge-income { background: rgba(34,211,238,0.15); color: var(--teal); }
-.badge-bond { background: rgba(139,152,177,0.15); color: var(--muted); }
+.badge-broad { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-tech { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-semi { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-dividend { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-growth { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-income { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-bond { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-treasury { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-tips { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-muni { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-corp { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
+.badge-ibond { background: var(--panel2); color: var(--muted); border: 1px solid var(--border); }
 
 .horizon-tag {
   padding: 2px 8px; border-radius: 4px;
   font-size: 10px; font-weight: 700;
   margin-left: auto;
 }
-.horizon-lt { background: rgba(59,130,246,0.12); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
-.horizon-st { background: rgba(0,229,160,0.12); color: var(--green); border: 1px solid rgba(0,229,160,0.3); }
+.horizon-lt { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.horizon-st { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.horizon-safe { background: transparent; color: var(--text); border: 1px solid var(--border); }
 
 /* Risk bar */
 .risk-row {
@@ -270,14 +310,35 @@ body {
 .verdict {
   margin-top: 10px;
   padding: 8px 10px;
-  background: rgba(59,130,246,0.05);
-  border-left: 2px solid rgba(59,130,246,0.4);
+  background: var(--panel2);
+  border-left: 2px solid var(--dim);
   border-radius: 0 6px 6px 0;
   font-size: 11px; color: var(--muted);
   line-height: 1.5;
   display: none;
 }
 .etf-card.expanded .verdict { display: block; }
+
+.buy-row {
+  display: none;
+  margin-top: 8px;
+  font-size: 10.5px;
+  color: var(--dim);
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.etf-card.expanded .buy-row { display: flex; }
+.buy-row .buy-lbl { color: var(--muted); font-weight: 600; }
+.platform-chip {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  color: var(--text);
+}
+
 .expand-btn {
   font-size: 10px; color: var(--dim);
   text-align: center; margin-top: 8px;
@@ -312,7 +373,7 @@ body {
   transition: background 0.15s;
 }
 .summary-table tbody tr:last-child { border-bottom: none; }
-.summary-table tbody tr:active { background: rgba(59,130,246,0.05); }
+.summary-table tbody tr:active { background: var(--panel2); }
 
 .summary-table tbody td {
   padding: 12px;
@@ -326,11 +387,60 @@ body {
 }
 .tbl-name { font-size: 10px; color: var(--muted); margin-top: 1px; }
 
+/* ── PLATFORM CARDS ── */
+.platform-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+.platform-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.platform-rank {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-weight: 700;
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.platform-rank.gold { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+.platform-body { flex: 1; }
+.platform-name {
+  font-size: 14px; font-weight: 700; color: var(--text);
+  margin-bottom: 3px;
+}
+.platform-tag {
+  display: inline-block;
+  font-size: 9px; font-weight: 700;
+  padding: 2px 7px; border-radius: 4px;
+  background: var(--panel2); color: var(--text);
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+.platform-desc {
+  font-size: 11.5px; color: var(--muted);
+  line-height: 1.5; margin-bottom: 8px;
+}
+.platform-meta {
+  display: flex; gap: 14px; flex-wrap: wrap;
+  font-size: 10.5px; color: var(--dim);
+}
+.platform-meta b { color: var(--text); }
+
 /* ── BOTTOM NAV ── */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
   z-index: 100;
-  background: rgba(11,15,26,0.95);
+  background: rgba(10,10,10,0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid var(--border);
@@ -356,15 +466,15 @@ body {
 .install-banner {
   margin: 0 16px 12px;
   padding: 12px 14px;
-  background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(0,229,160,0.08));
-  border: 1px solid rgba(59,130,246,0.3);
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 10px;
   display: flex; align-items: center; gap: 12px;
 }
 .install-banner .ib-text { flex: 1; font-size: 12px; color: var(--muted); line-height: 1.5; }
 .install-banner .ib-text strong { color: var(--text); display: block; margin-bottom: 2px; }
 .install-btn {
-  background: var(--blue); color: #fff;
+  background: var(--text); color: var(--bg);
   border: none; padding: 8px 14px;
   border-radius: 8px; font-size: 12px;
   font-weight: 700; cursor: pointer;
@@ -379,24 +489,15 @@ body {
   line-height: 1;
 }
 
-/* Loading skeleton */
-.skeleton {
-  background: linear-gradient(90deg, var(--border) 25%, var(--panel2) 50%, var(--border) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 4px;
-  display: inline-block;
-}
-@keyframes shimmer { to { background-position: -200% 0; } }
-
 /* Page views */
 .page { display: none; }
 .page.active { display: block; }
+.asset-view { display: none; }
+.asset-view.active { display: block; }
 
-/* Scrollable content below topbar */
 .scroll-content { overflow-y: auto; }
 
-/* Summary cards row */
+/* KPI row */
 .kpi-row {
   display: grid; grid-template-columns: repeat(2, 1fr);
   gap: 10px; padding: 0 16px 16px;
@@ -407,6 +508,7 @@ body {
 }
 .kpi-label { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
 .kpi-val { font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 700; color: var(--green); }
+.kpi-val.gold { color: var(--gold); }
 .kpi-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
 
 /* AI Analysis section */
@@ -424,8 +526,8 @@ body {
   color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
 }
 .ai-badge {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white; padding: 2px 8px; border-radius: 4px;
+  background: var(--text);
+  color: var(--bg); padding: 2px 8px; border-radius: 4px;
   font-size: 9px; font-weight: 700;
 }
 .ai-content { font-size: 12px; color: var(--muted); line-height: 1.7; }
@@ -437,8 +539,8 @@ body {
 .disclaimer {
   margin: 0 16px 16px;
   padding: 10px 12px;
-  background: rgba(245,158,11,0.06);
-  border-left: 2px solid rgba(245,158,11,0.4);
+  background: var(--panel2);
+  border-left: 2px solid var(--dim);
   border-radius: 0 6px 6px 0;
   font-size: 10px; color: var(--dim); line-height: 1.5;
 }
@@ -448,19 +550,27 @@ body {
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <div class="topbar-left">
-    <div class="eyebrow">📈 US Markets</div>
-    <h1>ETF Dashboard 2026</h1>
+  <div class="topbar-row">
+    <div class="topbar-left">
+      <div class="eyebrow" id="eyebrowText">📈 US Markets</div>
+      <h1 id="headerTitle">Stocks &amp; Bonds Dashboard</h1>
+    </div>
+    <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
+      <span class="spin-icon">⟳</span> Update
+    </button>
   </div>
-  <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">
-    <span class="spin-icon">⟳</span> Update
-  </button>
+
+  <!-- ASSET CLASS TOGGLE -->
+  <div class="asset-toggle">
+    <button class="asset-tab stocks active" id="tabStocks" onclick="switchAsset('stocks')">📊 Stocks / ETFs</button>
+    <button class="asset-tab bonds" id="tabBonds" onclick="switchAsset('bonds')">🏛️ Bonds</button>
+  </div>
 </div>
 
 <!-- STATUS BAR -->
 <div class="status-bar">
   <div class="status-dot" id="statusDot"></div>
-  <span id="statusText">Tap Update to fetch today's ETF data</span>
+  <span id="statusText">Tap Update to fetch today's data</span>
 </div>
 
 <!-- INSTALL BANNER -->
@@ -472,328 +582,465 @@ body {
   <button class="close-banner" onclick="document.getElementById('installBanner').style.display='none'">×</button>
 </div>
 
-<!-- NAV TABS -->
-<div class="nav-tabs">
-  <button class="nav-tab active" onclick="showPage('all', this)">All ETFs</button>
-  <button class="nav-tab" onclick="showPage('longterm', this)">📅 Long-Term</button>
-  <button class="nav-tab" onclick="showPage('shortterm', this)">⚡ Short-Term</button>
-  <button class="nav-tab" onclick="showPage('income', this)">💰 Income</button>
-  <button class="nav-tab" onclick="showPage('summary', this)">📊 Summary</button>
+<!-- ═══════════════════════════════════════ -->
+<!-- STOCKS / ETF VIEW                        -->
+<!-- ═══════════════════════════════════════ -->
+<div class="asset-view active" id="view-stocks">
+
+  <div class="nav-tabs">
+    <button class="nav-tab active stocks-theme" onclick="showPage('all', this, 'stocks')">All ETFs</button>
+    <button class="nav-tab stocks-theme" onclick="showPage('longterm', this, 'stocks')">📅 Long-Term</button>
+    <button class="nav-tab stocks-theme" onclick="showPage('shortterm', this, 'stocks')">⚡ Short-Term</button>
+    <button class="nav-tab stocks-theme" onclick="showPage('income', this, 'stocks')">💰 Income</button>
+    <button class="nav-tab stocks-theme" onclick="showPage('summary', this, 'stocks')">📊 Summary</button>
+    <button class="nav-tab stocks-theme" onclick="showPage('platforms', this, 'stocks')">🏦 Where to Buy</button>
+  </div>
+
+  <!-- PAGE: ALL -->
+  <div id="page-stocks-all" class="page active scroll-content">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Long-Term ETFs</div>
+        <span class="section-pill pill-lt">5–20+ YR HOLD</span>
+        <div class="divider"></div>
+      </div>
+      <div class="etf-grid" id="lt-cards"></div>
+
+      <div class="section-header">
+        <div class="section-title">Short-Term ETFs</div>
+        <span class="section-pill pill-st">1–36 MONTH</span>
+        <div class="divider"></div>
+      </div>
+      <div class="etf-grid" id="st-cards"></div>
+
+      <div class="section-header">
+        <div class="section-title">Monthly Income ETFs</div>
+        <span class="section-pill pill-income">HIGH YIELD</span>
+        <div class="divider"></div>
+      </div>
+      <div class="etf-grid" id="income-cards"></div>
+    </div>
+  </div>
+
+  <!-- PAGE: LONG TERM -->
+  <div id="page-stocks-longterm" class="page scroll-content">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Best 10-Yr CAGR</div>
+        <div class="kpi-val">+27.7%</div>
+        <div class="kpi-sub">SMH Semiconductors</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Lowest Cost</div>
+        <div class="kpi-val">0.03%</div>
+        <div class="kpi-sub">VOO / VTI</div>
+      </div>
+    </div>
+    <div class="section"><div class="etf-grid" id="lt-cards-2"></div></div>
+    <div class="ai-box">
+      <div class="ai-box-header"><span class="ai-badge">AI</span> Long-Term Strategy</div>
+      <div class="ai-content" id="lt-ai-content"><p>Tap <strong>Update</strong> above to get today's AI analysis.</p></div>
+    </div>
+  </div>
+
+  <!-- PAGE: SHORT TERM -->
+  <div id="page-stocks-shortterm" class="page scroll-content">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Lowest Risk</div>
+        <div class="kpi-val">BSV</div>
+        <div class="kpi-sub">Short-Term Bond ETF</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Best ST Yield</div>
+        <div class="kpi-val">~4.5%</div>
+        <div class="kpi-sub">Treasury / Bond ETFs</div>
+      </div>
+    </div>
+    <div class="section"><div class="etf-grid" id="st-cards-2"></div></div>
+    <div class="ai-box">
+      <div class="ai-box-header"><span class="ai-badge">AI</span> Short-Term Strategy</div>
+      <div class="ai-content" id="st-ai-content"><p>Tap <strong>Update</strong> above to get today's AI analysis.</p></div>
+    </div>
+  </div>
+
+  <!-- PAGE: INCOME -->
+  <div id="page-stocks-income" class="page scroll-content">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">JEPQ Yield</div>
+        <div class="kpi-val">~11%</div>
+        <div class="kpi-sub">Monthly distributions</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">SCHD Yield</div>
+        <div class="kpi-val">~3.5%</div>
+        <div class="kpi-sub">Quarterly, growing</div>
+      </div>
+    </div>
+    <div class="section"><div class="etf-grid" id="income-cards-2"></div></div>
+  </div>
+
+  <!-- PAGE: SUMMARY -->
+  <div id="page-stocks-summary" class="page scroll-content">
+    <div class="section">
+      <div class="section-header"><div class="section-title">All ETFs at a Glance</div><div class="divider"></div></div>
+      <div class="summary-table-wrap">
+        <table class="summary-table">
+          <thead><tr><th>ETF</th><th>10Y CAGR</th><th>Exp</th><th>Yield</th><th>Risk</th></tr></thead>
+          <tbody id="summary-tbody-stocks"></tbody>
+        </table>
+      </div>
+      <div class="disclaimer">⚠️ For informational purposes only. Not financial advice. Past performance is not indicative of future results. Always consult a licensed financial advisor.</div>
+    </div>
+  </div>
+
+  <!-- PAGE: PLATFORMS (Stocks) -->
+  <div id="page-stocks-platforms" class="page scroll-content">
+    <div class="section">
+      <div class="section-header"><div class="section-title">Recommended Platforms — Stocks &amp; ETFs</div><div class="divider"></div></div>
+      <div class="platform-grid" id="stock-platforms"></div>
+    </div>
+  </div>
+
 </div>
 
-<!-- ═══════════ PAGE: ALL ═══════════ -->
-<div id="page-all" class="page active scroll-content">
-  <div class="section">
+<!-- ═══════════════════════════════════════ -->
+<!-- BONDS VIEW                                -->
+<!-- ═══════════════════════════════════════ -->
+<div class="asset-view" id="view-bonds">
 
-    <!-- LONG TERM -->
-    <div class="section-header">
-      <div class="section-title">Long-Term ETFs</div>
-      <span class="section-pill pill-lt">5–20+ YR HOLD</span>
-      <div class="divider"></div>
-    </div>
-    <div class="etf-grid" id="lt-cards"></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active bonds-theme" onclick="showPage('all', this, 'bonds')">All Bonds</button>
+    <button class="nav-tab bonds-theme" onclick="showPage('treasury', this, 'bonds')">🏛️ Treasury</button>
+    <button class="nav-tab bonds-theme" onclick="showPage('tips', this, 'bonds')">🛡️ TIPS / I-Bonds</button>
+    <button class="nav-tab bonds-theme" onclick="showPage('corp', this, 'bonds')">🏢 Corporate / Muni</button>
+    <button class="nav-tab bonds-theme" onclick="showPage('summary', this, 'bonds')">📊 Summary</button>
+    <button class="nav-tab bonds-theme" onclick="showPage('platforms', this, 'bonds')">🏦 Where to Buy</button>
+  </div>
 
-    <!-- SHORT TERM -->
-    <div class="section-header">
-      <div class="section-title">Short-Term ETFs</div>
-      <span class="section-pill pill-st">1–36 MONTH</span>
-      <div class="divider"></div>
-    </div>
-    <div class="etf-grid" id="st-cards"></div>
+  <!-- PAGE: ALL BONDS -->
+  <div id="page-bonds-all" class="page active scroll-content">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">US Treasury &amp; Bills</div>
+        <span class="section-pill pill-safe">SAFEST</span>
+        <div class="divider"></div>
+      </div>
+      <div class="etf-grid" id="treasury-cards"></div>
 
-    <!-- INCOME -->
-    <div class="section-header">
-      <div class="section-title">Monthly Income ETFs</div>
-      <span class="section-pill pill-income">HIGH YIELD</span>
-      <div class="divider"></div>
-    </div>
-    <div class="etf-grid" id="income-cards"></div>
+      <div class="section-header">
+        <div class="section-title">TIPS &amp; I-Bonds</div>
+        <span class="section-pill pill-safe">INFLATION PROTECTED</span>
+        <div class="divider"></div>
+      </div>
+      <div class="etf-grid" id="tips-cards"></div>
 
+      <div class="section-header">
+        <div class="section-title">Corporate &amp; Municipal Bonds</div>
+        <span class="section-pill pill-income">HIGHER YIELD</span>
+        <div class="divider"></div>
+      </div>
+      <div class="etf-grid" id="corp-cards"></div>
+    </div>
   </div>
-</div>
 
-<!-- ═══════════ PAGE: LONG TERM ═══════════ -->
-<div id="page-longterm" class="page scroll-content">
-  <div class="kpi-row">
-    <div class="kpi-card">
-      <div class="kpi-label">Best 10-Yr CAGR</div>
-      <div class="kpi-val">+27.7%</div>
-      <div class="kpi-sub">SMH Semiconductors</div>
+  <!-- PAGE: TREASURY -->
+  <div id="page-bonds-treasury" class="page scroll-content">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Safest Asset</div>
+        <div class="kpi-val gold">VBIL</div>
+        <div class="kpi-sub">US Treasury Bills</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">10-Yr Treasury Yield</div>
+        <div class="kpi-val gold">~4.3%</div>
+        <div class="kpi-sub">Backed by US Govt</div>
+      </div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Lowest Cost</div>
-      <div class="kpi-val">0.03%</div>
-      <div class="kpi-sub">VOO / VTI</div>
-    </div>
-  </div>
-  <div class="section">
-    <div class="etf-grid" id="lt-cards-2"></div>
-  </div>
-  <div class="ai-box" id="lt-ai-box">
-    <div class="ai-box-header"><span class="ai-badge">AI</span> Long-Term Strategy</div>
-    <div class="ai-content" id="lt-ai-content">
-      <p>Tap <strong>Update</strong> above to get today's AI analysis for long-term ETF strategy.</p>
+    <div class="section"><div class="etf-grid" id="treasury-cards-2"></div></div>
+    <div class="ai-box">
+      <div class="ai-box-header"><span class="ai-badge">AI</span> Treasury Strategy</div>
+      <div class="ai-content" id="treasury-ai-content"><p>Tap <strong>Update</strong> above to get today's AI analysis.</p></div>
     </div>
   </div>
-</div>
 
-<!-- ═══════════ PAGE: SHORT TERM ═══════════ -->
-<div id="page-shortterm" class="page scroll-content">
-  <div class="kpi-row">
-    <div class="kpi-card">
-      <div class="kpi-label">Lowest Risk</div>
-      <div class="kpi-val">BSV</div>
-      <div class="kpi-sub">Short-Term Bond ETF</div>
+  <!-- PAGE: TIPS -->
+  <div id="page-bonds-tips" class="page scroll-content">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">10Y TIPS Real Yield</div>
+        <div class="kpi-val gold">~1.99%</div>
+        <div class="kpi-sub">Above inflation, guaranteed</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">I-Bond Protection</div>
+        <div class="kpi-val gold">100%</div>
+        <div class="kpi-sub">Tracks CPI inflation</div>
+      </div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Best ST Yield</div>
-      <div class="kpi-val">~4.5%</div>
-      <div class="kpi-sub">Treasury / Bond ETFs</div>
-    </div>
+    <div class="section"><div class="etf-grid" id="tips-cards-2"></div></div>
   </div>
-  <div class="section">
-    <div class="etf-grid" id="st-cards-2"></div>
-  </div>
-  <div class="ai-box">
-    <div class="ai-box-header"><span class="ai-badge">AI</span> Short-Term Strategy</div>
-    <div class="ai-content" id="st-ai-content">
-      <p>Tap <strong>Update</strong> above to get today's AI analysis for short-term positioning.</p>
-    </div>
-  </div>
-</div>
 
-<!-- ═══════════ PAGE: INCOME ═══════════ -->
-<div id="page-income" class="page scroll-content">
-  <div class="kpi-row">
-    <div class="kpi-card">
-      <div class="kpi-label">JEPQ Yield</div>
-      <div class="kpi-val">~11%</div>
-      <div class="kpi-sub">Monthly distributions</div>
+  <!-- PAGE: CORP/MUNI -->
+  <div id="page-bonds-corp" class="page scroll-content">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Investment-Grade Yield</div>
+        <div class="kpi-val gold">~5.2%</div>
+        <div class="kpi-sub">Corporate Bond ETFs</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Muni Tax Advantage</div>
+        <div class="kpi-val gold">Tax-Free</div>
+        <div class="kpi-sub">Federal (often state too)</div>
+      </div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">SCHD Yield</div>
-      <div class="kpi-val">~3.5%</div>
-      <div class="kpi-sub">Quarterly, growing</div>
-    </div>
+    <div class="section"><div class="etf-grid" id="corp-cards-2"></div></div>
   </div>
-  <div class="section">
-    <div class="etf-grid" id="income-cards-2"></div>
-  </div>
-</div>
 
-<!-- ═══════════ PAGE: SUMMARY ═══════════ -->
-<div id="page-summary" class="page scroll-content">
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">All ETFs at a Glance</div>
-      <div class="divider"></div>
-    </div>
-    <div class="summary-table-wrap">
-      <table class="summary-table">
-        <thead>
-          <tr>
-            <th>ETF</th>
-            <th>10Y CAGR</th>
-            <th>Exp</th>
-            <th>Yield</th>
-            <th>Risk</th>
-          </tr>
-        </thead>
-        <tbody id="summary-tbody"></tbody>
-      </table>
-    </div>
-    <div class="disclaimer">
-      ⚠️ For informational purposes only. Not financial advice. Past performance is not indicative of future results. Always consult a licensed financial advisor.
+  <!-- PAGE: SUMMARY (Bonds) -->
+  <div id="page-bonds-summary" class="page scroll-content">
+    <div class="section">
+      <div class="section-header"><div class="section-title">All Bonds at a Glance</div><div class="divider"></div></div>
+      <div class="summary-table-wrap">
+        <table class="summary-table">
+          <thead><tr><th>Bond/ETF</th><th>Yield</th><th>Exp</th><th>Duration</th><th>Risk</th></tr></thead>
+          <tbody id="summary-tbody-bonds"></tbody>
+        </table>
+      </div>
+      <div class="disclaimer">⚠️ For informational purposes only. Not financial advice. Bond yields fluctuate with interest rates. Always consult a licensed financial advisor.</div>
     </div>
   </div>
+
+  <!-- PAGE: PLATFORMS (Bonds) -->
+  <div id="page-bonds-platforms" class="page scroll-content">
+    <div class="section">
+      <div class="section-header"><div class="section-title">Recommended Platforms — Bonds</div><div class="divider"></div></div>
+      <div class="platform-grid" id="bond-platforms"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="bnav-item active" onclick="showPage('all', null, this)">
+  <div class="bnav-item active" id="bnav-all" onclick="bottomNavClick('all')">
     <div class="bnav-icon">📋</div>All
   </div>
-  <div class="bnav-item" onclick="showPage('longterm', null, this)">
-    <div class="bnav-icon">📅</div>Long
+  <div class="bnav-item" id="bnav-2" onclick="bottomNavClick('secondary')">
+    <div class="bnav-icon">📅</div><span id="bnav2-label">Long</span>
   </div>
-  <div class="bnav-item" onclick="showPage('shortterm', null, this)">
-    <div class="bnav-icon">⚡</div>Short
+  <div class="bnav-item" id="bnav-3" onclick="bottomNavClick('tertiary')">
+    <div class="bnav-icon">⚡</div><span id="bnav3-label">Short</span>
   </div>
-  <div class="bnav-item" onclick="showPage('income', null, this)">
-    <div class="bnav-icon">💰</div>Income
-  </div>
-  <div class="bnav-item" onclick="showPage('summary', null, this)">
+  <div class="bnav-item" id="bnav-4" onclick="bottomNavClick('summary')">
     <div class="bnav-icon">📊</div>Table
+  </div>
+  <div class="bnav-item" id="bnav-5" onclick="bottomNavClick('platforms')">
+    <div class="bnav-icon">🏦</div>Buy
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════
-// ETF DATA
+// STOCK/ETF DATA
 // ═══════════════════════════════
 const ETF_DATA = {
   longterm: [
-    {
-      sym: 'VOO', name: 'Vanguard S&P 500 ETF',
-      type: 'broad', typeLabel: 'Broad Market', horizon: 'lt',
-      cagr10: '+14.8%', exp: '0.03%', div: '~1.1%', ytd: '+9.1%',
-      risk: 40, riskLabel: 'Medium', riskColor: '#f59e0b',
-      aum: '$1.5T', holdings: '~500',
-      verdict: 'The gold standard for passive investing. Ultra-low cost with massive liquidity. Tracks the 500 largest US companies. Best single ETF for most long-term investors. Top 10 holdings = ~36% of fund (heavy Mag-7 tech).',
-      profile: '⭐ Best For: Beginners & long-term core holding'
-    },
-    {
-      sym: 'VTI', name: 'Vanguard Total Stock Market ETF',
-      type: 'broad', typeLabel: 'Broad Market', horizon: 'lt',
-      cagr10: '+14.3%', exp: '0.03%', div: '~1.1%', ytd: '+8.5%',
-      risk: 38, riskLabel: 'Medium', riskColor: '#f59e0b',
-      aum: '$567B', holdings: '~3,527',
-      verdict: 'Covers the entire US market — large, mid AND small-cap in one ticker. Only 0.5%/yr less than VOO historically but vastly broader. Best when you want zero companies left out.',
-      profile: '🌐 Best For: Maximum US market diversification'
-    },
-    {
-      sym: 'VGT', name: 'Vanguard Information Technology ETF',
-      type: 'tech', typeLabel: 'Technology', horizon: 'lt',
-      cagr10: '+25.6%', exp: '0.09%', div: '~0.3%', ytd: '+24.6%',
-      risk: 78, riskLabel: 'High', riskColor: '#ef4444',
-      aum: '$50B', holdings: '~325',
-      verdict: 'Pure-play tech with Apple, Nvidia & Microsoft at the top. Outperformed QQQ over 10 years at nearly HALF the cost. Best pick for long-term AI/tech believers willing to ride volatility.',
-      profile: '🚀 Best For: Tech-focused aggressive long-term growth'
-    },
-    {
-      sym: 'QQQ', name: 'Invesco Nasdaq-100 ETF',
-      type: 'tech', typeLabel: 'Technology', horizon: 'lt',
-      cagr10: '+21.6%', exp: '0.18%', div: '~0.4%', ytd: '+16.7%',
-      risk: 72, riskLabel: 'Med-High', riskColor: '#f59e0b',
-      aum: '$320B', holdings: '100',
-      verdict: 'The most-traded tech ETF globally. Tracks Nasdaq-100 including Amazon, Costco alongside tech. Best for active traders & options strategies due to enormous daily liquidity.',
-      profile: '💡 Best For: Nasdaq exposure + highest options liquidity'
-    },
-    {
-      sym: 'SMH', name: 'VanEck Semiconductor ETF',
-      type: 'semi', typeLabel: 'Semiconductors', horizon: 'lt',
-      cagr10: '+27.7%', exp: '0.35%', div: '~0.6%', ytd: '+18%',
-      risk: 90, riskLabel: 'Very High', riskColor: '#ef4444',
-      aum: '$25B', holdings: '~25',
-      verdict: 'Highest 10-year CAGR of any broad ETF. Concentrated in Nvidia, TSMC, Broadcom, AMD. Spectacular returns when AI demand surges, but painful in downturns. Not for the faint-hearted.',
-      profile: '🔥 Best For: Aggressive AI/chip bet over 5–10+ years'
-    },
-    {
-      sym: 'XLK', name: 'Technology Select Sector SPDR',
-      type: 'tech', typeLabel: 'Technology', horizon: 'lt',
-      cagr10: '+20.9%', exp: '0.08%', div: '~0.6%', ytd: '+22%',
-      risk: 74, riskLabel: 'Med-High', riskColor: '#f59e0b',
-      aum: '$70B', holdings: '74',
-      verdict: 'Large-cap S&P 500 tech names only. Very similar to VGT but with fewer small-cap holdings. Second-lowest expense ratio among tech ETFs. Strong alternative to VGT.',
-      profile: '🏛️ Best For: Large-cap tech at minimal cost'
-    },
-    {
-      sym: 'VUG', name: 'Vanguard Growth ETF',
-      type: 'growth', typeLabel: 'Growth', horizon: 'lt',
-      cagr10: '+17.2%', exp: '0.04%', div: '~0.4%', ytd: '+14%',
-      risk: 65, riskLabel: 'Med-High', riskColor: '#f59e0b',
-      aum: '$150B', holdings: '~200',
-      verdict: 'Broad US growth stocks — not just tech. Includes consumer discretionary, healthcare growth names. Great complement to VOO for a growth tilt without pure sector concentration.',
-      profile: '📈 Best For: Growth tilt with broader diversification'
-    }
+    { sym:'VOO', name:'Vanguard S&P 500 ETF', type:'broad', typeLabel:'Broad Market', horizon:'lt',
+      cagr10:'+14.8%', exp:'0.03%', div:'~1.1%', ytd:'+9.1%', risk:40, riskLabel:'Medium',
+      aum:'$1.5T', holdings:'~500',
+      verdict:'The gold standard for passive investing. Ultra-low cost with massive liquidity. Tracks the 500 largest US companies. Best single ETF for most long-term investors.',
+      profile:'⭐ Best For: Beginners & long-term core holding', platforms:['Fidelity','Schwab','Vanguard'] },
+    { sym:'VTI', name:'Vanguard Total Stock Market ETF', type:'broad', typeLabel:'Broad Market', horizon:'lt',
+      cagr10:'+14.3%', exp:'0.03%', div:'~1.1%', ytd:'+8.5%', risk:38, riskLabel:'Medium',
+      aum:'$567B', holdings:'~3,527',
+      verdict:'Covers the entire US market — large, mid AND small-cap in one ticker. Best when you want zero companies left out.',
+      profile:'🌐 Best For: Maximum US market diversification', platforms:['Fidelity','Schwab','Vanguard'] },
+    { sym:'VGT', name:'Vanguard Information Technology ETF', type:'tech', typeLabel:'Technology', horizon:'lt',
+      cagr10:'+25.6%', exp:'0.09%', div:'~0.3%', ytd:'+24.6%', risk:78, riskLabel:'High',
+      aum:'$50B', holdings:'~325',
+      verdict:'Pure-play tech with Apple, Nvidia & Microsoft at the top. Outperformed QQQ over 10 years at nearly half the cost.',
+      profile:'🚀 Best For: Tech-focused aggressive long-term growth', platforms:['Fidelity','Schwab','Vanguard'] },
+    { sym:'QQQ', name:'Invesco Nasdaq-100 ETF', type:'tech', typeLabel:'Technology', horizon:'lt',
+      cagr10:'+21.6%', exp:'0.18%', div:'~0.4%', ytd:'+16.7%', risk:72, riskLabel:'Med-High',
+      aum:'$320B', holdings:'100',
+      verdict:'The most-traded tech ETF globally. Best for active traders & options strategies due to enormous daily liquidity.',
+      profile:'💡 Best For: Nasdaq exposure + highest options liquidity', platforms:['Fidelity','Schwab','Public'] },
+    { sym:'SMH', name:'VanEck Semiconductor ETF', type:'semi', typeLabel:'Semiconductors', horizon:'lt',
+      cagr10:'+27.7%', exp:'0.35%', div:'~0.6%', ytd:'+18%', risk:90, riskLabel:'Very High',
+      aum:'$25B', holdings:'~25',
+      verdict:'Highest 10-year CAGR of any broad ETF. Concentrated in Nvidia, TSMC, Broadcom, AMD. Spectacular but volatile.',
+      profile:'🔥 Best For: Aggressive AI/chip bet over 5–10+ years', platforms:['Fidelity','Schwab','Public'] },
+    { sym:'XLK', name:'Technology Select Sector SPDR', type:'tech', typeLabel:'Technology', horizon:'lt',
+      cagr10:'+20.9%', exp:'0.08%', div:'~0.6%', ytd:'+22%', risk:74, riskLabel:'Med-High',
+      aum:'$70B', holdings:'74',
+      verdict:'Large-cap S&P 500 tech names only. Very similar to VGT with a lower expense ratio.',
+      profile:'🏛️ Best For: Large-cap tech at minimal cost', platforms:['Fidelity','Schwab'] },
+    { sym:'VUG', name:'Vanguard Growth ETF', type:'growth', typeLabel:'Growth', horizon:'lt',
+      cagr10:'+17.2%', exp:'0.04%', div:'~0.4%', ytd:'+14%', risk:65, riskLabel:'Med-High',
+      aum:'$150B', holdings:'~200',
+      verdict:'Broad US growth stocks — not just tech. Great complement to VOO for a growth tilt.',
+      profile:'📈 Best For: Growth tilt with broader diversification', platforms:['Fidelity','Vanguard'] }
   ],
-
   shortterm: [
-    {
-      sym: 'BSV', name: 'Vanguard Short-Term Bond ETF',
-      type: 'bond', typeLabel: 'Short-Term Bond', horizon: 'st',
-      cagr10: '+1.8%', exp: '0.04%', div: '~4.2%', ytd: '+2.1%',
-      risk: 12, riskLabel: 'Very Low', riskColor: '#00e5a0',
-      aum: '$35B', holdings: '~2,500',
-      verdict: 'Bonds maturing in 1–5 years. Minimal interest rate sensitivity. Near cash-equivalent safety with higher yield than money market. Best for capital preservation over 6–24 months.',
-      profile: '🛡️ Best For: Capital preservation, 6–24 month horizon'
-    },
-    {
-      sym: 'VBIL', name: 'Vanguard US Treasury Bill ETF',
-      type: 'bond', typeLabel: 'Treasury Bill', horizon: 'st',
-      cagr10: 'N/A', exp: '0.06%', div: '~4.5%', ytd: '+2.3%',
-      risk: 5, riskLabel: 'Near Zero', riskColor: '#00e5a0',
-      aum: '$8B', holdings: 'T-Bills',
-      verdict: 'Pure US Treasury bills — the safest instrument on earth. Yield closely tracks Fed funds rate. Morningstar-recommended as a cash alternative. Ideal parking spot while waiting for better opportunities.',
-      profile: '🏦 Best For: Cash management, <12 month horizon'
-    },
-    {
-      sym: 'SCHD', name: 'Schwab US Dividend Equity ETF',
-      type: 'dividend', typeLabel: 'Dividend', horizon: 'st',
-      cagr10: '+12.8%', exp: '0.06%', div: '~3.5%', ytd: '+20.7%',
-      risk: 35, riskLabel: 'Low-Med', riskColor: '#00e5a0',
-      aum: '$75B', holdings: '~100',
-      verdict: 'Lower volatility than S&P 500 with superior income. Already up +20.7% YTD 2026 vs VOO +9.1%. Dividend grew 48% cumulatively 2020–2023. Excellent for 1–3 year windows in volatile markets.',
-      profile: '💎 Best For: Stable income, lower volatility than S&P 500'
-    },
-    {
-      sym: 'BUZZ', name: 'VanEck Social Sentiment ETF',
-      type: 'growth', typeLabel: 'Social Sentiment', horizon: 'st',
-      cagr10: 'N/A', exp: '0.75%', div: '~0.3%', ytd: '+28%',
-      risk: 80, riskLabel: 'High', riskColor: '#ef4444',
-      aum: '$500M', holdings: '75',
-      verdict: 'Tracks stocks with highest positive social media buzz. Top-performing stock ETF in May 2026 per Morningstar. Momentum-driven and cyclical — best used tactically over weeks to months, not years.',
-      profile: '📱 Best For: Tactical momentum plays, 1–6 month windows'
-    },
-    {
-      sym: 'IJR', name: 'iShares Core S&P Small-Cap ETF',
-      type: 'broad', typeLabel: 'Small-Cap', horizon: 'st',
-      cagr10: '+10.2%', exp: '0.06%', div: '~1.4%', ytd: '+6.5%',
-      risk: 68, riskLabel: 'Med-High', riskColor: '#f59e0b',
-      aum: '$78B', holdings: '~600',
-      verdict: 'Small-cap US stocks with more upside potential in rate-cut environments. More volatile than large-cap but historically outperforms during economic recoveries. Tactical buy when rates drop.',
-      profile: '📊 Best For: Economic recovery plays, 1–3 year horizon'
-    }
+    { sym:'BSV', name:'Vanguard Short-Term Bond ETF', type:'bond', typeLabel:'Short-Term Bond', horizon:'st',
+      cagr10:'+1.8%', exp:'0.04%', div:'~4.2%', ytd:'+2.1%', risk:12, riskLabel:'Very Low',
+      aum:'$35B', holdings:'~2,500',
+      verdict:'Bonds maturing in 1–5 years. Minimal interest rate sensitivity. Best for capital preservation over 6–24 months.',
+      profile:'🛡️ Best For: Capital preservation, 6–24 month horizon', platforms:['Fidelity','Vanguard','Schwab'] },
+    { sym:'VBIL', name:'Vanguard US Treasury Bill ETF', type:'bond', typeLabel:'Treasury Bill', horizon:'st',
+      cagr10:'N/A', exp:'0.06%', div:'~4.5%', ytd:'+2.3%', risk:5, riskLabel:'Near Zero',
+      aum:'$8B', holdings:'T-Bills',
+      verdict:'Pure US Treasury bills — the safest instrument on earth. Ideal parking spot while waiting for better opportunities.',
+      profile:'🏦 Best For: Cash management, <12 month horizon', platforms:['Fidelity','Vanguard'] },
+    { sym:'SCHD', name:'Schwab US Dividend Equity ETF', type:'dividend', typeLabel:'Dividend', horizon:'st',
+      cagr10:'+12.8%', exp:'0.06%', div:'~3.5%', ytd:'+20.7%', risk:35, riskLabel:'Low-Med',
+      aum:'$75B', holdings:'~100',
+      verdict:'Lower volatility than S&P 500 with superior income. Already up +20.7% YTD 2026.',
+      profile:'💎 Best For: Stable income, lower volatility than S&P 500', platforms:['Schwab','Fidelity'] },
+    { sym:'BUZZ', name:'VanEck Social Sentiment ETF', type:'growth', typeLabel:'Social Sentiment', horizon:'st',
+      cagr10:'N/A', exp:'0.75%', div:'~0.3%', ytd:'+28%', risk:80, riskLabel:'High',
+      aum:'$500M', holdings:'75',
+      verdict:'Tracks stocks with highest positive social media buzz. Momentum-driven — use tactically over weeks to months.',
+      profile:'📱 Best For: Tactical momentum plays, 1–6 month windows', platforms:['Public','Fidelity'] },
+    { sym:'IJR', name:'iShares Core S&P Small-Cap ETF', type:'broad', typeLabel:'Small-Cap', horizon:'st',
+      cagr10:'+10.2%', exp:'0.06%', div:'~1.4%', ytd:'+6.5%', risk:68, riskLabel:'Med-High',
+      aum:'$78B', holdings:'~600',
+      verdict:'Small-cap US stocks with more upside potential in rate-cut environments. Tactical buy when rates drop.',
+      profile:'📊 Best For: Economic recovery plays, 1–3 year horizon', platforms:['Fidelity','Schwab'] }
   ],
-
   income: [
-    {
-      sym: 'JEPI', name: 'JPMorgan Equity Premium Income ETF',
-      type: 'income', typeLabel: 'Covered Call', horizon: 'st',
-      cagr10: 'N/A', exp: '0.35%', div: '~7%', ytd: '+0.9%',
-      risk: 30, riskLabel: 'Low-Med', riskColor: '#22d3ee',
-      aum: '$40B', holdings: '~100 (S&P Low-Vol)',
-      verdict: 'Sells S&P 500 covered calls to generate monthly income. Defensive — loses less in downturns than S&P 500 but lags in rallies. 4-year return of +43%. Best for retirees or income-first investors. Hold in IRA/401k for tax efficiency.',
-      profile: '🎯 Best For: Retirees, income-first, bond replacement'
-    },
-    {
-      sym: 'JEPQ', name: 'JPMorgan Nasdaq Equity Premium Income ETF',
-      type: 'income', typeLabel: 'Covered Call', horizon: 'st',
-      cagr10: 'N/A', exp: '0.35%', div: '~11%', ytd: '+6.5%',
-      risk: 50, riskLabel: 'Medium', riskColor: '#f59e0b',
-      aum: '$38B', holdings: '~80 (Nasdaq-100)',
-      verdict: 'Same JPMorgan covered-call strategy but on Nasdaq-100. Higher yield (~11%) vs JEPI due to richer tech option premiums. 4-year return of +82% vs JEPI\'s +43%. YTD +6.45% vs JEPI +0.86%. Best in AI volatility-driven markets. Use in tax-advantaged accounts.',
-      profile: '🔥 Best For: High income + Nasdaq exposure in volatile markets'
-    },
-    {
-      sym: 'SCHD', name: 'Schwab US Dividend Equity ETF',
-      type: 'dividend', typeLabel: 'Dividend Growth', horizon: 'lt',
-      cagr10: '+12.8%', exp: '0.06%', div: '~3.5%', ytd: '+20.7%',
-      risk: 35, riskLabel: 'Low-Med', riskColor: '#00e5a0',
-      aum: '$75B', holdings: '~100',
-      verdict: 'The best pure dividend-growth ETF. Dividend grew 48% cumulatively 2020–2023. Lower expense ratio than JEPI/JEPQ, qualified dividends (tax-efficient). Up +20.7% YTD already crushing income-focused peers. Ideal pairing with VGT or VOO.',
-      profile: '💰 Best For: Dividend growth + total return balance'
-    }
+    { sym:'JEPI', name:'JPMorgan Equity Premium Income ETF', type:'income', typeLabel:'Covered Call', horizon:'st',
+      cagr10:'N/A', exp:'0.35%', div:'~7%', ytd:'+0.9%', risk:30, riskLabel:'Low-Med',
+      aum:'$40B', holdings:'~100',
+      verdict:'Sells S&P 500 covered calls to generate monthly income. Defensive — best in IRA/401k for tax efficiency.',
+      profile:'🎯 Best For: Retirees, income-first, bond replacement', platforms:['Fidelity','Schwab'] },
+    { sym:'JEPQ', name:'JPMorgan Nasdaq Equity Premium Income ETF', type:'income', typeLabel:'Covered Call', horizon:'st',
+      cagr10:'N/A', exp:'0.35%', div:'~11%', ytd:'+6.5%', risk:50, riskLabel:'Medium',
+      aum:'$38B', holdings:'~80',
+      verdict:'Same JPMorgan covered-call strategy but on Nasdaq-100. Higher yield due to richer tech option premiums.',
+      profile:'🔥 Best For: High income + Nasdaq exposure in volatile markets', platforms:['Fidelity','Schwab'] },
+    { sym:'SCHD', name:'Schwab US Dividend Equity ETF', type:'dividend', typeLabel:'Dividend Growth', horizon:'lt',
+      cagr10:'+12.8%', exp:'0.06%', div:'~3.5%', ytd:'+20.7%', risk:35, riskLabel:'Low-Med',
+      aum:'$75B', holdings:'~100',
+      verdict:'The best pure dividend-growth ETF. Qualified dividends (tax-efficient). Ideal pairing with VGT or VOO.',
+      profile:'💰 Best For: Dividend growth + total return balance', platforms:['Schwab','Fidelity'] }
   ]
 };
 
 // ═══════════════════════════════
-// RENDER CARDS
+// BOND DATA
+// ═══════════════════════════════
+const BOND_DATA = {
+  treasury: [
+    { sym:'VBIL', name:'Vanguard US Treasury Bill ETF', type:'treasury', typeLabel:'T-Bill', horizon:'safe',
+      yield:'~4.5%', exp:'0.06%', duration:'<1 yr', risk:5, riskLabel:'Near Zero',
+      aum:'$8B', maturity:'0–3 months',
+      verdict:'Pure US Treasury bills — the safest dollar-denominated asset on earth. Yield closely tracks the Fed funds rate.',
+      profile:'🏦 Best For: Cash parking, near-zero risk', platforms:['Vanguard','Fidelity','TreasuryDirect.gov'] },
+    { sym:'SCHR', name:'Schwab Intermediate-Term US Treasury ETF', type:'treasury', typeLabel:'Treasury', horizon:'safe',
+      yield:'~4.02%', exp:'0.03%', duration:'4.9 yrs', risk:18, riskLabel:'Very Low',
+      aum:'$16B', maturity:'3–10 years',
+      verdict:'Tracks the Bloomberg US Treasury 3-10 Year Index with an ultra-low 0.03% expense ratio.', 
+      profile:'🛡️ Best For: Medium-duration safety with minimal fees', platforms:['Schwab','Fidelity'] },
+    { sym:'GOVT', name:'iShares US Treasury Bond ETF', type:'treasury', typeLabel:'Treasury', horizon:'safe',
+      yield:'~4.14%', exp:'0.05%', duration:'5.8 yrs', risk:20, riskLabel:'Low',
+      aum:'$30B', maturity:'1–30 years',
+      verdict:'Broad exposure across the full US Treasury yield curve, holding around 296 government bonds.',
+      profile:'🏛️ Best For: Full-curve Treasury diversification', platforms:['Fidelity','Schwab'] },
+    { sym:'10Y-T', name:'10-Year US Treasury Note', type:'treasury', typeLabel:'Individual Bond', horizon:'safe',
+      yield:'~4.3%', exp:'$0', duration:'10 yrs', risk:15, riskLabel:'Very Low',
+      aum:'N/A', maturity:'10 years (fixed)',
+      verdict:'Direct ownership with a guaranteed fixed rate if held to maturity. Backed by full faith of the US government.',
+      profile:'🔒 Best For: Guaranteed fixed return, no fund fees', platforms:['TreasuryDirect.gov','Fidelity','Schwab'] }
+  ],
+  tips: [
+    { sym:'I-Bond', name:'Series I Savings Bond', type:'ibond', typeLabel:'I-Bond', horizon:'safe',
+      yield:'Inflation+fixed', exp:'$0', duration:'Up to 30 yrs', risk:5, riskLabel:'Near Zero',
+      aum:'N/A', maturity:'30 years (cash out after 1 yr)',
+      verdict:'Backed by the US government, exempt from state/local tax. Rate resets every 6 months with inflation. Limited to $10K/year purchase.',
+      profile:'💵 Best For: Pure inflation protection, tax-advantaged', platforms:['TreasuryDirect.gov'] },
+    { sym:'TIP', name:'iShares TIPS Bond ETF', type:'tips', typeLabel:'TIPS ETF', horizon:'safe',
+      yield:'~1.99% real', exp:'0.19%', duration:'7.5 yrs', risk:22, riskLabel:'Low',
+      aum:'$18B', maturity:'Mixed (broad TIPS basket)',
+      verdict:'Principal adjusts with inflation (CPI). 10-year TIPS real yield was 1.99% in April 2026 — a guaranteed return above inflation.',
+      profile:'📈 Best For: Inflation hedge with daily liquidity', platforms:['Fidelity','Schwab','Vanguard'] },
+    { sym:'VTIP', name:'Vanguard Short-Term TIPS ETF', type:'tips', typeLabel:'Short TIPS', horizon:'safe',
+      yield:'~1.7% real', exp:'0.04%', duration:'2.5 yrs', risk:10, riskLabel:'Very Low',
+      aum:'$12B', maturity:'0–5 years',
+      verdict:'Shorter duration than TIP means less price sensitivity to rate changes while still protecting against inflation.',
+      profile:'🛡️ Best For: Low-volatility inflation protection', platforms:['Vanguard','Fidelity'] }
+  ],
+  corp: [
+    { sym:'LQD', name:'iShares iBoxx Investment Grade Corp Bond ETF', type:'corp', typeLabel:'Corporate', horizon:'safe',
+      yield:'~5.2%', exp:'0.14%', duration:'8.5 yrs', risk:32, riskLabel:'Low-Med',
+      aum:'$28B', maturity:'Mixed investment-grade',
+      verdict:'Holds bonds from blue-chip companies rated investment-grade. Higher yield than Treasuries with modest credit risk.',
+      profile:'🏢 Best For: Higher income than Treasuries, still investment-grade', platforms:['Fidelity','Schwab'] },
+    { sym:'MUB', name:'iShares National Muni Bond ETF', type:'muni', typeLabel:'Municipal', horizon:'safe',
+      yield:'~3.8% (tax-free)', exp:'0.05%', duration:'6.5 yrs', risk:20, riskLabel:'Low',
+      aum:'$38B', maturity:'Mixed state/local',
+      verdict:'Interest is exempt from federal tax (often state tax too). Tax-equivalent yield can exceed 5–6% for high earners.',
+      profile:'💼 Best For: High-income earners seeking tax-free yield', platforms:['Fidelity','Schwab'] },
+    { sym:'VCSH', name:'Vanguard Short-Term Corporate Bond ETF', type:'corp', typeLabel:'Corporate', horizon:'safe',
+      yield:'~4.6%', exp:'0.03%', duration:'2.7 yrs', risk:18, riskLabel:'Low',
+      aum:'$45B', maturity:'1–5 years',
+      verdict:'Short-duration corporate bonds reduce interest rate risk while still beating Treasury yields.',
+      profile:'⚡ Best For: Short-term corporate yield pickup', platforms:['Vanguard','Fidelity'] }
+  ]
+};
+
+// ═══════════════════════════════
+// PLATFORM DATA
+// ═══════════════════════════════
+const PLATFORMS_STOCKS = [
+  { name:'Fidelity', tag:'#1 OVERALL PICK', desc:'Zero-expense-ratio index funds, fractional shares from $1, excellent research tools, and strong 24/7 customer service. Best all-around choice for beginners and long-term investors.', fee:'$0 stock/ETF trades', min:'$0 minimum', best:'Beginners & long-term' },
+  { name:'Charles Schwab', tag:'BEST FOR ACTIVE TRADERS', desc:'Ranked #1 overall by StockBrokers.com 2026. Powerful thinkorswim platform, 300+ branches, and a Satisfaction Guarantee. Great if you want in-person support too.', fee:'$0 stock/ETF trades', min:'$0 minimum', best:'Active trading + branches' },
+  { name:'Vanguard', tag:'BEST FOR INDEX INVESTORS', desc:'Famous for ultra-low-fee mutual funds and ETFs. Ideal for simple buy-and-hold investing, though less agile for active stock trading.', fee:'$0 stock/ETF trades', min:'$0 minimum', best:'Buy-and-hold simplicity' },
+  { name:'Public', tag:'BEST FOR ALL ASSETS', desc:'Commission-free stocks, ETFs, options, bonds, and crypto in one app. Pays rebates on options trades and offers an AI-powered "agentic brokerage" feature.', fee:'$0 + options rebates', min:'$0 minimum', best:'All-in-one mobile app' }
+];
+
+const PLATFORMS_BONDS = [
+  { name:'TreasuryDirect.gov', tag:'#1 FOR I-BONDS & T-BILLS', desc:'The only place to buy I-Bonds directly. Also sells Treasury bills, notes, and TIPS straight from the US government with zero markup or fees.', fee:'$0 fees', min:'$0 minimum (some $25-100)', best:'I-Bonds, T-Bills, direct Treasuries' },
+  { name:'Fidelity', tag:'BEST OVERALL BOND BROKER', desc:'Extensive bond offering including Treasuries, corporates, munis, and bond ETFs. Strong bond screener tools and zero account fees.', fee:'$0 ETF trades; bond markups vary', min:'$0 minimum', best:'Bond ETFs + individual bonds' },
+  { name:'Vanguard', tag:'BEST FOR LOW-COST BOND FUNDS', desc:'Industry-leading low-cost bond ETFs (BSV, VTIP, VCSH all under 0.05% expense ratio). Excellent if you prefer funds over individual bonds.', fee:'$0 ETF trades', min:'$0 minimum', best:'Low-cost bond ETFs' },
+  { name:'Charles Schwab', tag:'BEST FOR BOND SELECTION', desc:'Trades stocks, mutual funds, ETFs, options, individual bonds, and futures all in one account, with 24/7 phone and chat support.', fee:'$0 ETF; $25 broker-assisted', min:'$0 minimum', best:'Wide bond selection + service' },
+  { name:'Interactive Brokers', tag:'BEST FOR GLOBAL BONDS', desc:'Access to over 1 million bond products globally including US and international corporate bonds. Bond Search tool filters by maturity, yield, and quality.', fee:'No markups/spreads', min:'Varies', best:'Advanced/international bond traders' }
+];
+
+// ═══════════════════════════════
+// RENDER HELPERS
 // ═══════════════════════════════
 function riskColor(pct) {
-  if (pct <= 20) return '#00e5a0';
-  if (pct <= 50) return '#f59e0b';
-  return '#ef4444';
+  if (pct <= 20) return '#4ade80';
+  if (pct <= 50) return '#999999';
+  return '#f87171';
 }
 
-function renderCard(etf) {
+function renderCard(etf, isBond) {
+  const horizonTag = isBond
+    ? `<span class="horizon-tag horizon-safe">🛡️ Safe Haven</span>`
+    : `<span class="horizon-tag ${etf.horizon === 'lt' ? 'horizon-lt' : 'horizon-st'}">${etf.horizon === 'lt' ? '📅 Long-Term' : '⚡ Short-Term'}</span>`;
+
+  const stat3Label = isBond ? 'Duration' : 'Expense';
+  const stat3Val = isBond ? etf.duration : etf.exp;
+  const stat4Label = isBond ? 'Exp Ratio' : 'Div Yield';
+  const stat4Val = isBond ? etf.exp : etf.div;
+  const stat1Label = isBond ? 'Yield' : '10Y CAGR';
+  const stat1Val = isBond ? etf.yield : etf.cagr10;
+  const stat2Label = isBond ? 'Maturity' : 'YTD 2026';
+  const stat2Val = isBond ? etf.maturity : etf.ytd;
+
+  const platformChips = (etf.platforms || []).map(p => `<span class="platform-chip">${p}</span>`).join('');
+
   return `
   <div class="etf-card ${etf.type}" onclick="toggleCard(this)">
     <div class="badge-row">
       <span class="badge badge-${etf.type}">${etf.typeLabel}</span>
-      <span class="horizon-tag ${etf.horizon === 'lt' ? 'horizon-lt' : 'horizon-st'}">
-        ${etf.horizon === 'lt' ? '📅 Long-Term' : '⚡ Short-Term'}
-      </span>
+      ${horizonTag}
     </div>
     <div class="card-top">
       <div class="card-left">
@@ -806,33 +1053,22 @@ function renderCard(etf) {
       </div>
     </div>
     <div class="card-stats">
-      <div class="stat-item">
-        <div class="stat-lbl">10Y CAGR</div>
-        <div class="stat-val pos">${etf.cagr10}</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-lbl">YTD 2026</div>
-        <div class="stat-val pos">${etf.ytd}</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-lbl">Expense</div>
-        <div class="stat-val">${etf.exp}</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-lbl">Div Yield</div>
-        <div class="stat-val" style="color:#00e5a0">${etf.div}</div>
-      </div>
+      <div class="stat-item"><div class="stat-lbl">${stat1Label}</div><div class="stat-val pos">${stat1Val}</div></div>
+      <div class="stat-item"><div class="stat-lbl">${stat2Label}</div><div class="stat-val">${stat2Val}</div></div>
+      <div class="stat-item"><div class="stat-lbl">${stat3Label}</div><div class="stat-val">${stat3Val}</div></div>
+      <div class="stat-item"><div class="stat-lbl">${stat4Label}</div><div class="stat-val" style="color:var(--text)">${stat4Val}</div></div>
     </div>
     <div class="risk-row">
       <span class="risk-lbl">Risk:</span>
-      <div class="risk-track">
-        <div class="risk-fill" style="width:${etf.risk}%;background:${riskColor(etf.risk)}"></div>
-      </div>
+      <div class="risk-track"><div class="risk-fill" style="width:${etf.risk}%;background:${riskColor(etf.risk)}"></div></div>
       <span class="stat-val" style="color:${riskColor(etf.risk)};font-size:10px">${etf.riskLabel}</span>
     </div>
     <div class="verdict">
-      <div style="font-size:10px;color:#3b82f6;font-weight:700;margin-bottom:4px">${etf.profile}</div>
+      <div style="font-size:10px;color:var(--text);font-weight:700;margin-bottom:4px">${etf.profile}</div>
       ${etf.verdict}
+    </div>
+    <div class="buy-row">
+      <span class="buy-lbl">Buy on:</span>${platformChips}
     </div>
     <div class="expand-btn">▼ tap for details</div>
   </div>`;
@@ -842,59 +1078,145 @@ function toggleCard(el) {
   const wasExpanded = el.classList.contains('expanded');
   document.querySelectorAll('.etf-card.expanded').forEach(c => c.classList.remove('expanded'));
   if (!wasExpanded) el.classList.add('expanded');
-  el.querySelector('.expand-btn').textContent = el.classList.contains('expanded')
-    ? '▲ less' : '▼ tap for details';
+  el.querySelector('.expand-btn').textContent = el.classList.contains('expanded') ? '▲ less' : '▼ tap for details';
+}
+
+function renderPlatformCard(p, idx) {
+  return `
+  <div class="platform-card">
+    <div class="platform-rank ${idx === 0 ? 'gold' : ''}">${idx + 1}</div>
+    <div class="platform-body">
+      <div class="platform-name">${p.name}</div>
+      <div class="platform-tag">${p.tag}</div>
+      <div class="platform-desc">${p.desc}</div>
+      <div class="platform-meta">
+        <span>💵 <b>${p.fee}</b></span>
+        <span>📊 <b>${p.min}</b></span>
+        <span>🎯 <b>${p.best}</b></span>
+      </div>
+    </div>
+  </div>`;
 }
 
 function renderAll() {
-  const allEtfs = [...ETF_DATA.longterm, ...ETF_DATA.shortterm, ...ETF_DATA.income];
-  const unique = [];
-  const seen = new Set();
-  allEtfs.forEach(e => { if (!seen.has(e.sym)) { seen.add(e.sym); unique.push(e); } });
+  // Stocks
+  document.getElementById('lt-cards').innerHTML = ETF_DATA.longterm.map(e => renderCard(e, false)).join('');
+  document.getElementById('lt-cards-2').innerHTML = ETF_DATA.longterm.map(e => renderCard(e, false)).join('');
+  document.getElementById('st-cards').innerHTML = ETF_DATA.shortterm.map(e => renderCard(e, false)).join('');
+  document.getElementById('st-cards-2').innerHTML = ETF_DATA.shortterm.map(e => renderCard(e, false)).join('');
+  document.getElementById('income-cards').innerHTML = ETF_DATA.income.map(e => renderCard(e, false)).join('');
+  document.getElementById('income-cards-2').innerHTML = ETF_DATA.income.map(e => renderCard(e, false)).join('');
 
-  document.getElementById('lt-cards').innerHTML = ETF_DATA.longterm.map(renderCard).join('');
-  document.getElementById('lt-cards-2').innerHTML = ETF_DATA.longterm.map(renderCard).join('');
-  document.getElementById('st-cards').innerHTML = ETF_DATA.shortterm.map(renderCard).join('');
-  document.getElementById('st-cards-2').innerHTML = ETF_DATA.shortterm.map(renderCard).join('');
-  document.getElementById('income-cards').innerHTML = ETF_DATA.income.map(renderCard).join('');
-  document.getElementById('income-cards-2').innerHTML = ETF_DATA.income.map(renderCard).join('');
+  // Bonds
+  document.getElementById('treasury-cards').innerHTML = BOND_DATA.treasury.map(e => renderCard(e, true)).join('');
+  document.getElementById('treasury-cards-2').innerHTML = BOND_DATA.treasury.map(e => renderCard(e, true)).join('');
+  document.getElementById('tips-cards').innerHTML = BOND_DATA.tips.map(e => renderCard(e, true)).join('');
+  document.getElementById('tips-cards-2').innerHTML = BOND_DATA.tips.map(e => renderCard(e, true)).join('');
+  document.getElementById('corp-cards').innerHTML = BOND_DATA.corp.map(e => renderCard(e, true)).join('');
+  document.getElementById('corp-cards-2').innerHTML = BOND_DATA.corp.map(e => renderCard(e, true)).join('');
 
-  // Summary table
-  const tbody = document.getElementById('summary-tbody');
-  tbody.innerHTML = unique.map(e => `
+  // Stock summary table
+  const allStocks = [...ETF_DATA.longterm, ...ETF_DATA.shortterm, ...ETF_DATA.income];
+  const seenS = new Set(); const uniqueS = [];
+  allStocks.forEach(e => { if (!seenS.has(e.sym)) { seenS.add(e.sym); uniqueS.push(e); } });
+  document.getElementById('summary-tbody-stocks').innerHTML = uniqueS.map(e => `
     <tr>
-      <td>
-        <div class="tbl-sym">${e.sym}</div>
-        <div class="tbl-name">${e.name.split(' ').slice(0,3).join(' ')}…</div>
-      </td>
+      <td><div class="tbl-sym">${e.sym}</div><div class="tbl-name">${e.name.split(' ').slice(0,3).join(' ')}…</div></td>
       <td class="pos" style="font-family:'IBM Plex Mono',monospace;font-size:12px">${e.cagr10}</td>
       <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${e.exp}</td>
-      <td style="color:#00e5a0;font-family:'IBM Plex Mono',monospace;font-size:11px">${e.div}</td>
+      <td style="color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px">${e.div}</td>
       <td style="color:${riskColor(e.risk)};font-size:11px;font-weight:600">${e.riskLabel}</td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
+
+  // Bond summary table
+  const allBonds = [...BOND_DATA.treasury, ...BOND_DATA.tips, ...BOND_DATA.corp];
+  document.getElementById('summary-tbody-bonds').innerHTML = allBonds.map(e => `
+    <tr>
+      <td><div class="tbl-sym">${e.sym}</div><div class="tbl-name">${e.name.split(' ').slice(0,3).join(' ')}…</div></td>
+      <td style="color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px">${e.yield}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${e.exp}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${e.duration}</td>
+      <td style="color:${riskColor(e.risk)};font-size:11px;font-weight:600">${e.riskLabel}</td>
+    </tr>`).join('');
+
+  // Platforms
+  document.getElementById('stock-platforms').innerHTML = PLATFORMS_STOCKS.map(renderPlatformCard).join('');
+  document.getElementById('bond-platforms').innerHTML = PLATFORMS_BONDS.map(renderPlatformCard).join('');
 }
 
 // ═══════════════════════════════
-// PAGE NAVIGATION
+// ASSET CLASS SWITCH (Stocks <-> Bonds)
 // ═══════════════════════════════
-function showPage(id, tabBtn, navBtn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+let currentAsset = 'stocks';
+
+function switchAsset(asset) {
+  currentAsset = asset;
+  document.getElementById('tabStocks').classList.toggle('active', asset === 'stocks');
+  document.getElementById('tabBonds').classList.toggle('active', asset === 'bonds');
+  document.getElementById('view-stocks').classList.toggle('active', asset === 'stocks');
+  document.getElementById('view-bonds').classList.toggle('active', asset === 'bonds');
+
+  document.getElementById('eyebrowText').textContent = asset === 'stocks' ? '📈 US Markets' : '🏛️ Fixed Income';
+  document.getElementById('headerTitle').textContent = asset === 'stocks' ? 'Stocks & ETF Dashboard' : 'Bonds Dashboard';
+
+  if (asset === 'stocks') {
+    document.getElementById('bnav2-label').textContent = 'Long';
+    document.getElementById('bnav3-label').textContent = 'Short';
+    document.querySelector('#bnav-2 .bnav-icon').textContent = '📅';
+    document.querySelector('#bnav-3 .bnav-icon').textContent = '⚡';
+  } else {
+    document.getElementById('bnav2-label').textContent = 'Treasury';
+    document.getElementById('bnav3-label').textContent = 'TIPS';
+    document.querySelector('#bnav-2 .bnav-icon').textContent = '🏛️';
+    document.querySelector('#bnav-3 .bnav-icon').textContent = '🛡️';
+  }
+  bottomNavClick('all');
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════
+// PAGE NAVIGATION (within asset class)
+// ═══════════════════════════════
+function showPage(pageId, tabBtn, asset) {
+  const prefix = 'page-' + asset + '-';
+  document.querySelectorAll(`#view-${asset} .page`).forEach(p => p.classList.remove('active'));
+  document.getElementById(prefix + pageId).classList.add('active');
 
   if (tabBtn) {
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll(`#view-${asset} .nav-tab`).forEach(t => t.classList.remove('active'));
     tabBtn.classList.add('active');
   }
-  if (navBtn) {
-    document.querySelectorAll('.bnav-item').forEach(n => n.classList.remove('active'));
-    navBtn.classList.add('active');
-    // Sync nav tabs
-    const tabs = ['all','longterm','shortterm','income','summary'];
-    document.querySelectorAll('.nav-tab').forEach((t,i) => {
-      t.classList.toggle('active', tabs[i] === id);
-    });
-  }
+  syncBottomNav(pageId);
+  window.scrollTo(0, 0);
+}
+
+function syncBottomNav(pageId) {
+  const map = { all:'bnav-all', longterm:'bnav-2', treasury:'bnav-2', shortterm:'bnav-3', tips:'bnav-3',
+                income:null, corp:null, summary:'bnav-4', platforms:'bnav-5' };
+  document.querySelectorAll('.bnav-item').forEach(n => n.classList.remove('active'));
+  const id = map[pageId];
+  if (id) document.getElementById(id).classList.add('active');
+}
+
+function bottomNavClick(key) {
+  const stocksMap = { all:'all', secondary:'longterm', tertiary:'shortterm', summary:'summary', platforms:'platforms' };
+  const bondsMap = { all:'all', secondary:'treasury', tertiary:'tips', summary:'summary', platforms:'platforms' };
+  const pageId = currentAsset === 'stocks' ? stocksMap[key] : bondsMap[key];
+  const tabBtn = document.querySelector(`#view-${currentAsset} .nav-tab`);
+  // find matching tab button by approximate text match fallback: just call showPage directly
+  document.querySelectorAll(`#view-${currentAsset} .page`).forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${currentAsset}-${pageId}`).classList.add('active');
+
+  // sync nav-tabs row too
+  const navTabs = document.querySelectorAll(`#view-${currentAsset} .nav-tab`);
+  const order = currentAsset === 'stocks'
+    ? ['all','longterm','shortterm','income','summary','platforms']
+    : ['all','treasury','tips','corp','summary','platforms'];
+  navTabs.forEach((t, i) => t.classList.toggle('active', order[i] === pageId));
+
+  document.querySelectorAll('.bnav-item').forEach(n => n.classList.remove('active'));
+  const navIdMap = { all:'bnav-all', secondary:'bnav-2', tertiary:'bnav-3', summary:'bnav-4', platforms:'bnav-5' };
+  document.getElementById(navIdMap[key]).classList.add('active');
   window.scrollTo(0, 0);
 }
 
@@ -908,9 +1230,10 @@ async function refreshData() {
 
   btn.classList.add('spinning');
   dot.classList.remove('live', 'error');
-  statusText.textContent = 'Fetching today\'s ETF data from AI...';
+  statusText.textContent = 'Fetching today\'s data from AI...';
 
-  const tickers = ['VOO','VTI','VGT','QQQ','SMH','XLK','VUG','BSV','VBIL','SCHD','BUZZ','IJR','JEPI','JEPQ'];
+  const stockTickers = ['VOO','VTI','VGT','QQQ','SMH','XLK','VUG','BSV','VBIL','SCHD','BUZZ','IJR','JEPI','JEPQ'];
+  const bondTickers = ['SCHR','GOVT','TIP','VTIP','LQD','MUB','VCSH'];
   const today = new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 
   try {
@@ -919,22 +1242,24 @@ async function refreshData() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        system: `You are a financial data assistant. Today is ${today}. Return ONLY valid JSON, no markdown, no explanation. Provide realistic ETF price data based on your best knowledge.`,
+        max_tokens: 1200,
+        system: `You are a financial data assistant. Today is ${today}. Return ONLY valid JSON, no markdown, no explanation. Provide realistic price/yield data based on your best knowledge.`,
         messages: [{
           role: 'user',
-          content: `For these ETFs: ${tickers.join(', ')}, return a JSON object like:
+          content: `For these stock ETFs: ${stockTickers.join(', ')} and these bond ETFs: ${bondTickers.join(', ')}, return JSON like:
 {
   "updated": "${today}",
   "market": "open|closed|pre-market",
   "prices": {
     "VOO": { "price": "534.21", "change": "+2.14", "changePct": "+0.40%" },
+    "SCHR": { "price": "48.10", "change": "+0.05", "changePct": "+0.10%" },
     ...
   },
-  "lt_analysis": "2-sentence long-term ETF strategy note for today",
-  "st_analysis": "2-sentence short-term ETF positioning note for today"
+  "lt_analysis": "2-sentence long-term stock ETF strategy note for today",
+  "st_analysis": "2-sentence short-term stock ETF positioning note for today",
+  "treasury_analysis": "2-sentence note on Treasury/bond market conditions today"
 }
-Use realistic approximate prices. Return only JSON.`
+Use realistic approximate prices for ALL tickers listed. Return only JSON.`
         }]
       })
     });
@@ -944,48 +1269,31 @@ Use realistic approximate prices. Return only JSON.`
     const clean = text.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
 
-    // Update prices
     const prices = parsed.prices || {};
     Object.keys(prices).forEach(sym => {
       const d = prices[sym];
-      const priceEls = document.querySelectorAll(`#price-${sym}`);
-      const changeEls = document.querySelectorAll(`#change-${sym}`);
-      priceEls.forEach(el => { el.textContent = '$' + d.price; });
-      changeEls.forEach(el => {
+      document.querySelectorAll(`#price-${sym}`).forEach(el => { el.textContent = '$' + d.price; });
+      document.querySelectorAll(`#change-${sym}`).forEach(el => {
         el.textContent = `${d.change} (${d.changePct})`;
         el.className = 'card-change ' + (d.change.startsWith('-') ? 'neg' : 'pos');
       });
     });
 
-    // AI analysis
-    if (parsed.lt_analysis) {
-      document.getElementById('lt-ai-content').innerHTML = `<p>${parsed.lt_analysis}</p>`;
-    }
-    if (parsed.st_analysis) {
-      document.getElementById('st-ai-content').innerHTML = `<p>${parsed.st_analysis}</p>`;
-    }
+    if (parsed.lt_analysis) document.getElementById('lt-ai-content').innerHTML = `<p>${parsed.lt_analysis}</p>`;
+    if (parsed.st_analysis) document.getElementById('st-ai-content').innerHTML = `<p>${parsed.st_analysis}</p>`;
+    if (parsed.treasury_analysis) document.getElementById('treasury-ai-content').innerHTML = `<p>${parsed.treasury_analysis}</p>`;
 
-    // Save to localStorage
-    localStorage.setItem('etf_cache', JSON.stringify({ ts: Date.now(), data: parsed }));
+    localStorage.setItem('invest_cache', JSON.stringify({ ts: Date.now(), data: parsed }));
 
     dot.classList.add('live');
     statusText.textContent = `✓ Updated ${today} · Market: ${parsed.market || 'N/A'}`;
 
   } catch (err) {
-    // Try loading from cache
-    const cached = localStorage.getItem('etf_cache');
+    const cached = localStorage.getItem('invest_cache');
     if (cached) {
       const { ts, data } = JSON.parse(cached);
       const age = Math.round((Date.now() - ts) / 60000);
-      const prices = data.prices || {};
-      Object.keys(prices).forEach(sym => {
-        const d = prices[sym];
-        document.querySelectorAll(`#price-${sym}`).forEach(el => { el.textContent = '$' + d.price; });
-        document.querySelectorAll(`#change-${sym}`).forEach(el => {
-          el.textContent = `${d.change} (${d.changePct})`;
-          el.className = 'card-change ' + (d.change.startsWith('-') ? 'neg' : 'pos');
-        });
-      });
+      applyCachedPrices(data);
       dot.classList.add('error');
       statusText.textContent = `⚠ Using cached data from ${age}m ago`;
     } else {
@@ -997,46 +1305,42 @@ Use realistic approximate prices. Return only JSON.`
   btn.classList.remove('spinning');
 }
 
+function applyCachedPrices(data) {
+  const prices = data.prices || {};
+  Object.keys(prices).forEach(sym => {
+    const d = prices[sym];
+    document.querySelectorAll(`#price-${sym}`).forEach(el => el.textContent = '$' + d.price);
+    document.querySelectorAll(`#change-${sym}`).forEach(el => {
+      el.textContent = `${d.change} (${d.changePct})`;
+      el.className = 'card-change ' + (d.change.startsWith('-') ? 'neg' : 'pos');
+    });
+  });
+}
+
 // ═══════════════════════════════
 // INIT
 // ═══════════════════════════════
 renderAll();
 
-// Try restore from cache
-const cached = localStorage.getItem('etf_cache');
+const cached = localStorage.getItem('invest_cache');
 if (cached) {
   try {
     const { ts, data } = JSON.parse(cached);
     const ageMin = Math.round((Date.now() - ts) / 60000);
-    if (ageMin < 1440) { // less than 24h
-      const prices = data.prices || {};
-      Object.keys(prices).forEach(sym => {
-        const d = prices[sym];
-        document.querySelectorAll(`#price-${sym}`).forEach(el => el.textContent = '$' + d.price);
-        document.querySelectorAll(`#change-${sym}`).forEach(el => {
-          el.textContent = `${d.change} (${d.changePct})`;
-          el.className = 'card-change ' + (d.change.startsWith('-') ? 'neg' : 'pos');
-        });
-      });
+    if (ageMin < 1440) {
+      applyCachedPrices(data);
       document.getElementById('statusDot').classList.add('live');
       document.getElementById('statusText').textContent = `Cached data · ${ageMin}m ago · Tap Update to refresh`;
     }
   } catch(e) {}
 }
 
-// PWA: show install banner on iOS
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 const isStandalone = window.navigator.standalone;
-if (isIOS && !isStandalone) {
-  document.getElementById('installBanner').style.display = 'flex';
-}
+if (isIOS && !isStandalone) document.getElementById('installBanner').style.display = 'flex';
 
-// Register service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
-}
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 
-// PWA install prompt for Android
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
